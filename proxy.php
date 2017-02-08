@@ -7,7 +7,7 @@ if($verb == 'GET' and isset($_GET['id'])){
 	$curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "https://api-beta.mr-dlib.org/v1/documents/".$_GET["id"]."/related_documents",
+  CURLOPT_URL => "https://api.mr-dlib.org/v1/documents/".$_GET["id"]."/related_documents",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
@@ -53,7 +53,7 @@ echo "<div style='color:#FFFFFF'>$first_200_char_response</div>";
 <ul class= "rec">
 <?php for($x = 0; $x < $reclength; $x++) { ?>
 	<li>
-	<div class='mdl-authors'><?=$rec[$x]->authors?> </div> 
+	<div class='mdl-authors'><?=$rec[$x]->author_names?> </div> 
 	
 	<div class='article_link'>
 	 
