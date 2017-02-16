@@ -3,11 +3,31 @@
 	$verb = $_SERVER['REQUEST_METHOD'];
 	echo $_SERVER['HTTP_REFERER'];
 
+$json_file = file_get_contents('config.json');
+	$jfo = json_decode($json_file);
+	$mr_dlib_server = $jfo->mrdlib;
+	$partner_server = $jfo->partner;
+	//echo $mr_dlib_server;
+	if ($mr_dlib_server === 'beta'){
+	$api = 'api-beta';
+	}elseif($mr_dlib_server=== 'dev'){
+	$api = 'api-dev';
+	}elseif($mr_dlib_server=== 'prod'){
+	$api = 'api';
+	}else{
+	echo 'please check mrdlib variable in config file';}
+	if ($partner_server === 'beta'){
+	echo 'partner beta';
+	}elseif($mr_dlib_server=== 'prod'){
+	echo 'partner prod';}
+	echo "<br>";
+	echo $api;
+
 if($verb == 'GET' and isset($_GET['id'])){
 	$curl = curl_init();
 
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "https://api.mr-dlib.org/v1/documents/".$_GET["id"]."/related_documents",
+  CURLOPT_URL => "https://".$api.".mr-dlib.org/v1/documents/".$_GET["id"]."/related_documents",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => "GET",
@@ -53,11 +73,17 @@ echo "<div style='color:#FFFFFF'>$first_200_char_response</div>";
 <ul class= "rec">
 <?php for($x = 0; $x < $reclength; $x++) { ?>
 	<li>
-	<div class='mdl-authors'><?=$rec[$x]->author_names?> </div> 
+	<div class='mdl-authors'><?=$rec[$x]->authors?> </div> 
 	
 	<div class='article_link'>
 	 
-	<a class= 'mdl-title' href='<?=$rec[$x]->fallback_url?>' target='_blank' onclick="makeDliblog('http://GesisHost/proxy.php?url=<?=$rec[$x]->click_url?>','1')"><?=$rec[$x]->title?></a>
+	<a class= 'mdl-title' href='
+<?php if ($partner_server === 'beta'){?>
+	<?=str_replace("sowiport","sowiportbeta",$rec[$x]->fallback_url)?>
+	<?php }else{ ?>
+	<?=$rec[$x]->fallback_url?> 
+	<?php } ?>
+	' target='_blank' onclick="makeDliblog('http://js-client.demo.mr-dlib.org/proxy/Proxy?url=<?=$rec[$x]->click_url?>','1')"><?=$rec[$x]->title?></a>
 	<?php if ($rec[$x]->year > 0) { ?>
 	<span class='mdl-year'>(<?=$year = $rec[$x]->year?>)</span>
 	<?php } ?>
